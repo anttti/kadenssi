@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Machine, assign } from "xstate";
 import { useMachine } from "@xstate/react";
 
@@ -22,7 +22,8 @@ type KadenssiEvent =
   | { type: "TICK" }
   | { type: "PAUSE" }
   | { type: "STOP" }
-  | { type: "FINISH" };
+  | { type: "FINISH" }
+  | { type: "RESET" };
 
 interface IStep {
   id: number;
@@ -52,7 +53,10 @@ const machine = Machine<IKadenssiContext, IKadenssiSchema, KadenssiEvent>(
           currentTime: _ => 0
         }),
         on: {
-          RUN: "running",
+          RUN: {
+            target: "running",
+            cond: "canStart"
+          },
           ADD_STEP: {
             target: "setup",
             actions: assign({
@@ -83,51 +87,128 @@ const machine = Machine<IKadenssiContext, IKadenssiSchema, KadenssiEvent>(
         }
       },
       running: {
+        entry: assign({
+          currentTime: ({ currentTime }) => currentTime + 1,
+          currentStep: ({ steps, currentTime, currentStep }) => {
+            const isTimeLeftInCurrentStep =
+              currentTime < steps[currentStep].duration;
+            const isNextStepAvailable = currentStep < steps.length - 1;
+            if (!isTimeLeftInCurrentStep && isNextStepAvailable) {
+              return currentStep + 1;
+            }
+            return currentStep;
+          }
+        }),
         on: {
           PAUSE: "paused",
           STOP: "setup",
-          TICK: {
-            target: "running",
-            actions: assign({
-              // TODO: If time is up, go to next step
-              //       If no steps left, go to finished
-              currentTime: context => context.currentTime + 1
-            })
-          },
-          FINISH: "finished"
+          TICK: [
+            { target: "running", cond: "isTimeLeft" },
+            { target: "running", cond: "areStepsLeft" },
+            { target: "finished" }
+          ]
         }
       },
       paused: {
         on: { RUN: "running", STOP: "setup" }
       },
       finished: {
-        on: {}
+        on: { RESET: "setup" }
       }
     }
   },
   {
-    actions: {
-      reset: (context, event) => {}
+    actions: {},
+    guards: {
+      canStart: context => context.steps.length > 0,
+      isTimeLeft: context =>
+        context.currentTime <
+        context.steps.map(s => s.duration).reduce((acc, curr) => curr + acc, 0),
+      areStepsLeft: context => context.currentStep < context.steps.length - 1
     }
   }
 );
 
 function App() {
+  const [state, send] = useMachine(machine);
+  const [title, setTitle] = useState("");
+  const [duration, setDuration] = useState("");
+
+  const createStep = (e: any) => {
+    e.preventDefault();
+    send("ADD_STEP", { title, duration: parseInt(duration, 10) });
+  };
+
+  // Master clock. Always keep sending the TICK event, as it is only
+  // reacted to when the state machine is in the "running" state.
+  useEffect(() => {
+    const interval = setInterval(() => send("TICK"), 1000);
+    return () => clearInterval(interval);
+  }, [send]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className="p-4">
+      <h1 className="font-bold">Kadenssi</h1>
+      <p>Current state: {state.value}</p>
+      <p>Current step: {state.context.currentStep}</p>
+      <p>Current time: {state.context.currentTime}</p>
+      <ul>
+        {state.context.steps.map(step => (
+          <li key={step.id}>
+            {step.title}: {step.duration}
+          </li>
+        ))}
+      </ul>
+
+      {state.matches("setup") && (
+        <button
+          className="bg-blue-600 text-white rounded p-2"
+          onClick={() => send("RUN")}
         >
-          Learn React
-        </a>
-      </header>
+          Start
+        </button>
+      )}
+
+      {state.matches("setup") && (
+        <form onSubmit={createStep}>
+          <label className="block">
+            Title:
+            <input
+              type="text"
+              className="border p-2"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+            />
+          </label>
+
+          <label className="block">
+            Duration:
+            <input
+              type="text"
+              className="border p-2"
+              value={duration}
+              onChange={e => setDuration(e.target.value)}
+            />
+          </label>
+
+          <input type="submit" onClick={createStep} value="Create" />
+        </form>
+      )}
+
+      {state.matches("running") && (
+        <button onClick={() => send("PAUSE")}>Pause</button>
+      )}
+
+      {state.matches("paused") && (
+        <button onClick={() => send("RUN")}>Continue</button>
+      )}
+
+      {state.matches("finished") && (
+        <>
+          <h1>All done!</h1>
+          <button onClick={() => send("RESET")}>Back to setup</button>
+        </>
+      )}
     </div>
   );
 }
