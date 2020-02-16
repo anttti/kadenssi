@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Machine, assign } from "xstate";
 import { useMachine } from "@xstate/react";
+import classNames from "classnames";
 
 interface IKadenssiSchema {
   states: {
@@ -36,6 +37,15 @@ interface IKadenssiContext {
   currentStep: number;
   currentTime: number;
 }
+
+const guards = {
+  canStart: (context: IKadenssiContext) => context.steps.length > 0,
+  isTimeLeft: (context: IKadenssiContext) =>
+    context.currentTime <
+    context.steps.map(s => s.duration).reduce((acc, curr) => curr + acc, 0),
+  areStepsLeft: (context: IKadenssiContext) =>
+    context.currentStep < context.steps.length - 1
+};
 
 const machine = Machine<IKadenssiContext, IKadenssiSchema, KadenssiEvent>(
   {
@@ -119,13 +129,7 @@ const machine = Machine<IKadenssiContext, IKadenssiSchema, KadenssiEvent>(
   },
   {
     actions: {},
-    guards: {
-      canStart: context => context.steps.length > 0,
-      isTimeLeft: context =>
-        context.currentTime <
-        context.steps.map(s => s.duration).reduce((acc, curr) => curr + acc, 0),
-      areStepsLeft: context => context.currentStep < context.steps.length - 1
-    }
+    guards
   }
 );
 
@@ -133,10 +137,23 @@ function App() {
   const [state, send] = useMachine(machine);
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("");
+  const titleRef = useRef<HTMLInputElement>(null);
+
+  const isSetup = state.matches("setup");
+  const isRunning = state.matches("running");
+  const isPaused = state.matches("paused");
+  const isActive = isRunning || isPaused;
+  const isFinished = state.matches("finished");
+  const canStart = guards.canStart(state.context);
 
   const createStep = (e: any) => {
     e.preventDefault();
     send("ADD_STEP", { title, duration: parseInt(duration, 10) });
+    setTitle("");
+    setDuration("");
+    if (titleRef.current) {
+      titleRef.current.focus();
+    }
   };
 
   // Master clock. Always keep sending the TICK event, as it is only
@@ -146,70 +163,84 @@ function App() {
     return () => clearInterval(interval);
   }, [send]);
 
+  console.log("Current state:", state.value);
+
   return (
-    <div className="p-4">
-      <h1 className="font-bold">Kadenssi</h1>
-      <p>Current state: {state.value}</p>
-      <p>Current step: {state.context.currentStep}</p>
-      <p>Current time: {state.context.currentTime}</p>
-      <ul>
-        {state.context.steps.map(step => (
-          <li key={step.id}>
-            {step.title}: {step.duration}
-          </li>
-        ))}
-      </ul>
+    <>
+      <div className="p-4">
+        <h1 className="font-bold">Kadenssi</h1>
+        <p>
+          T: {state.context.currentTime} (s: {state.context.currentStep})
+        </p>
+      </div>
 
-      {state.matches("setup") && (
-        <button
-          className="bg-blue-600 text-white rounded p-2"
-          onClick={() => send("RUN")}
-        >
-          Start
-        </button>
-      )}
-
-      {state.matches("setup") && (
-        <form onSubmit={createStep}>
-          <label className="block">
-            Title:
+      <div className="p-4">
+        <ul>
+          {state.context.steps.map(step => (
+            <li key={step.id} className="grid gap-4 grid-cols-4 col-span-4">
+              <div className="col-span-3">{step.title}</div>
+              <div className="col-span-1">{step.duration}</div>
+            </li>
+          ))}
+        </ul>
+        {isSetup && (
+          <form
+            className="grid gap-4 grid-cols-4 col-span-4"
+            onSubmit={createStep}
+          >
             <input
+              id="title"
               type="text"
-              className="border p-2"
+              className="border p-1 col-span-3"
               value={title}
+              placeholder="Title"
               onChange={e => setTitle(e.target.value)}
+              ref={titleRef}
             />
-          </label>
 
-          <label className="block">
-            Duration:
             <input
-              type="text"
-              className="border p-2"
+              id="duration"
+              type="number"
+              className="border p-1 col-span-1"
               value={duration}
+              placeholder="Duration (min)"
               onChange={e => setDuration(e.target.value)}
             />
-          </label>
 
-          <input type="submit" onClick={createStep} value="Create" />
-        </form>
-      )}
+            <input type="submit" style={{ visibility: "hidden" }} />
+          </form>
+        )}
 
-      {state.matches("running") && (
-        <button onClick={() => send("PAUSE")}>Pause</button>
-      )}
+        {isSetup && (
+          <button
+            className={classNames("bg-blue-600 text-white rounded p-2", {
+              "opacity-50": !canStart
+            })}
+            onClick={() => send("RUN")}
+            disabled={!canStart}
+          >
+            Start
+          </button>
+        )}
 
-      {state.matches("paused") && (
-        <button onClick={() => send("RUN")}>Continue</button>
-      )}
+        {isActive && (
+          <p>
+            Current step: {state.context.steps[state.context.currentStep].title}
+          </p>
+        )}
 
-      {state.matches("finished") && (
-        <>
-          <h1>All done!</h1>
-          <button onClick={() => send("RESET")}>Back to setup</button>
-        </>
-      )}
-    </div>
+        {isRunning && <button onClick={() => send("PAUSE")}>Pause</button>}
+
+        {isPaused && <button onClick={() => send("RUN")}>Continue</button>}
+
+        {isFinished && (
+          <>
+            <h1>All done!</h1>
+            <button onClick={() => send("RESET")}>Back to setup</button>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
