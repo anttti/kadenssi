@@ -17,8 +17,7 @@ function App() {
   const isSetup = state.matches("setup");
   const isRunning = state.matches("running");
   const isPaused = state.matches("paused");
-  const isFinished = state.matches("finished");
-  const isActive = isRunning || isPaused || isFinished;
+  const isActive = isRunning || isPaused;
   const canStart = guards.canStart(state.context);
 
   console.log("Current state:", state.value);
@@ -50,11 +49,12 @@ function App() {
   const renderSetup = () => {
     return (
       <>
-        <ul>
+        <h1 className="ml-4 mb-4 uppercase font-bold tracking-widest">Steps</h1>
+        <ul className="rounded-lg p-4 mb-4 grid row-gap-2 bg-gray">
           {state.context.steps.map(step => (
             <li key={step.id} className="grid gap-4 grid-cols-4 col-span-4">
               <div className="col-span-3">{step.title}</div>
-              <div className="col-span-1">{step.duration}</div>
+              <div className="col-span-1 text-right">{step.duration} min</div>
             </li>
           ))}
         </ul>
@@ -66,7 +66,7 @@ function App() {
           <input
             id="title"
             type="text"
-            className="border p-1 col-span-3"
+            className="rounded-lg py-2 px-4 col-span-3 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
             value={state.context.newStepTitle}
             placeholder="Title"
             onChange={e => onTitleChanged(e.target.value)}
@@ -76,7 +76,7 @@ function App() {
           <input
             id="duration"
             type="number"
-            className="border p-1 col-span-1"
+            className="rounded-lg py-2 px-4 col-span-1 text-right bg-gray"
             value={state.context.newStepDuration}
             placeholder="Duration (min)"
             onChange={e => onDurationChanged(e.target.value)}
@@ -112,18 +112,12 @@ function App() {
 
         {isRunning && <Button onClick={() => send("PAUSE")}>Pause</Button>}
         {isPaused && <Button onClick={() => send("RUN")}>Continue</Button>}
-        {isFinished && (
-          <>
-            <h1>All done!</h1>
-            <Button onClick={() => send("RESET")}>Back to setup</Button>
-          </>
-        )}
       </>
     );
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 min-h-screen">
       {isSetup && renderSetup()}
       {isActive && renderActive()}
     </div>
