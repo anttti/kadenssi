@@ -4,14 +4,30 @@ import classNames from "classnames";
 interface IButton {
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
-const Button: React.FC<IButton> = ({ onClick, disabled, children }) => {
+const Button: React.FC<IButton> = ({
+  onClick,
+  className,
+  disabled,
+  children
+}) => {
   return (
     <button
       onClick={onClick}
       className={classNames(
-        "text-white rounded py-2 px-6 bg-dark-red text-red",
+        `${className}
+         button
+         uppercase
+         font-bold
+         text-white
+         tracking-widest
+         rounded
+         py-4
+         px-10
+         active:outline-none
+         focus:outline-none`,
         {
           "opacity-50": disabled
         }

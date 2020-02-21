@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.button {
+  border-radius: 50px;
+  background: linear-gradient(145deg, #2f353c, #2f353c);
+  box-shadow: 4px 4px 8px #1e2226, -4px -4px 8px #404852;
+}
+
+.button:active {
+  background: #2f353c;
+  box-shadow: inset 4px 4px 8px #1e2226, inset -4px -4px 8px #404852;
+}

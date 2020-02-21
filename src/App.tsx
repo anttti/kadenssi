@@ -49,7 +49,6 @@ function App() {
   const renderSetup = () => {
     return (
       <>
-        <h1 className="ml-4 mb-4 uppercase font-bold tracking-widest">Steps</h1>
         <ul className="rounded-lg p-4 mb-4 grid row-gap-2 bg-gray">
           {state.context.steps.map(step => (
             <li key={step.id} className="grid gap-4 grid-cols-4 col-span-4">
@@ -68,7 +67,7 @@ function App() {
             type="text"
             className="rounded-lg py-2 px-4 col-span-3 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
             value={state.context.newStepTitle}
-            placeholder="Title"
+            placeholder="Otsikko"
             onChange={e => onTitleChanged(e.target.value)}
             ref={titleRef}
           />
@@ -76,17 +75,21 @@ function App() {
           <input
             id="duration"
             type="number"
-            className="rounded-lg py-2 px-4 col-span-1 text-right bg-gray"
+            className="rounded-lg py-2 px-4 col-span-1 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
             value={state.context.newStepDuration}
-            placeholder="Duration (min)"
+            placeholder="Kesto (min)"
             onChange={e => onDurationChanged(e.target.value)}
           />
 
           <input type="submit" style={{ visibility: "hidden" }} />
         </form>
 
-        <Button onClick={() => send("RUN")} disabled={!canStart}>
-          Start
+        <Button
+          className="block mx-auto"
+          onClick={() => send("RUN")}
+          disabled={!canStart}
+        >
+          Aloita
         </Button>
       </>
     );
@@ -110,14 +113,17 @@ function App() {
           {prependZero(currentStepSeconds)})
         </p>
 
-        {isRunning && <Button onClick={() => send("PAUSE")}>Pause</Button>}
-        {isPaused && <Button onClick={() => send("RUN")}>Continue</Button>}
+        {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
+        {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}
       </>
     );
   };
 
   return (
     <div className="container mx-auto p-4 min-h-screen">
+      <h1 className="ml-4 mb-4 uppercase font-bold tracking-widest text-center opacity-50">
+        Kadenssi
+      </h1>
       {isSetup && renderSetup()}
       {isActive && renderActive()}
     </div>
