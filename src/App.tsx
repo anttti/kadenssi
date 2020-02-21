@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useMachine } from "@xstate/react";
 import Button from "./components/Button";
-import { machine, guards } from "./state-machine";
+import Setup from "./views/Setup";
+import { machine } from "./state-machine";
 
 const prependZero = (val: number) => {
   if (val < 10) {
@@ -12,13 +13,11 @@ const prependZero = (val: number) => {
 
 function App() {
   const [state, send] = useMachine(machine);
-  const titleRef = useRef<HTMLInputElement>(null);
 
   const isSetup = state.matches("setup");
   const isRunning = state.matches("running");
   const isPaused = state.matches("paused");
   const isActive = isRunning || isPaused;
-  const canStart = guards.canStart(state.context);
 
   console.log("Current state:", state.value);
   console.log("Context:", state.context);
@@ -29,71 +28,6 @@ function App() {
     const interval = setInterval(() => send("TICK"), 1000);
     return () => clearInterval(interval);
   }, [send]);
-
-  const createStep = (e: any) => {
-    e.preventDefault();
-    send("ADD_STEP");
-    if (titleRef.current) {
-      titleRef.current.focus();
-    }
-  };
-
-  const onTitleChanged = (str: string) => {
-    send("SET_TITLE", { title: str });
-  };
-
-  const onDurationChanged = (str: string) => {
-    send("SET_DURATION", { duration: parseInt(str, 10) });
-  };
-
-  const renderSetup = () => {
-    return (
-      <>
-        <ul className="rounded-lg p-4 mb-4 grid row-gap-2 bg-gray">
-          {state.context.steps.map(step => (
-            <li key={step.id} className="grid gap-4 grid-cols-4 col-span-4">
-              <div className="col-span-3">{step.title}</div>
-              <div className="col-span-1 text-right">{step.duration} min</div>
-            </li>
-          ))}
-        </ul>
-
-        <form
-          className="grid gap-4 grid-cols-4 col-span-4"
-          onSubmit={createStep}
-        >
-          <input
-            id="title"
-            type="text"
-            className="rounded-lg py-2 px-4 col-span-3 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
-            value={state.context.newStepTitle}
-            placeholder="Otsikko"
-            onChange={e => onTitleChanged(e.target.value)}
-            ref={titleRef}
-          />
-
-          <input
-            id="duration"
-            type="number"
-            className="rounded-lg py-2 px-4 col-span-1 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
-            value={state.context.newStepDuration}
-            placeholder="Kesto (min)"
-            onChange={e => onDurationChanged(e.target.value)}
-          />
-
-          <input type="submit" style={{ visibility: "hidden" }} />
-        </form>
-
-        <Button
-          className="block mx-auto"
-          onClick={() => send("RUN")}
-          disabled={!canStart}
-        >
-          Aloita
-        </Button>
-      </>
-    );
-  };
 
   const renderActive = () => {
     const currentStep = state.context.steps[state.context.currentStep];
@@ -124,7 +58,7 @@ function App() {
       <h1 className="ml-4 mb-4 uppercase font-bold tracking-widest text-center opacity-50">
         Kadenssi
       </h1>
-      {isSetup && renderSetup()}
+      {isSetup && <Setup send={send} state={state} />}
       {isActive && renderActive()}
     </div>
   );

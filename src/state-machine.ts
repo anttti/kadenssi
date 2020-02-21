@@ -1,6 +1,6 @@
 import { Machine, assign } from "xstate";
 
-interface IKadenssiSchema {
+export interface IKadenssiSchema {
   states: {
     setup: {};
     running: {};
@@ -9,7 +9,7 @@ interface IKadenssiSchema {
   };
 }
 
-type KadenssiEvent =
+export type KadenssiEvent =
   | { type: "SETUP" }
   | { type: "SET_TITLE"; title: string }
   | { type: "SET_DURATION"; duration: number }
@@ -25,13 +25,13 @@ type KadenssiEvent =
   | { type: "FINISH" }
   | { type: "RESET" };
 
-interface IStep {
+export interface IStep {
   id: number;
   title: string;
   duration: number;
 }
 
-interface IKadenssiContext {
+export interface IKadenssiContext {
   steps: IStep[];
   currentStep: number;
   currentTime: number;
@@ -39,7 +39,7 @@ interface IKadenssiContext {
   newStepDuration: number;
 }
 
-const guards = {
+export const guards = {
   canStart: (context: IKadenssiContext) => context.steps.length > 0,
   isValidNewStep: (context: IKadenssiContext) =>
     context.newStepTitle.trim().length > 0 && context.newStepDuration > 0,
@@ -50,7 +50,11 @@ const guards = {
     context.currentStep < context.steps.length - 1
 };
 
-const machine = Machine<IKadenssiContext, IKadenssiSchema, KadenssiEvent>(
+export const machine = Machine<
+  IKadenssiContext,
+  IKadenssiSchema,
+  KadenssiEvent
+>(
   {
     id: "kadenssi",
     initial: "setup",
@@ -169,5 +173,3 @@ const machine = Machine<IKadenssiContext, IKadenssiSchema, KadenssiEvent>(
     guards
   }
 );
-
-export { machine, guards };
