@@ -1,6 +1,10 @@
 import React, { useRef, useCallback } from "react";
-import { DndProvider } from "react-dnd";
-import Backend from "react-dnd-html5-backend";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult
+} from "react-beautiful-dnd";
 import { State } from "xstate";
 import update from "immutability-helper";
 import Button from "../components/Button";
@@ -47,21 +51,32 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
     [state.context.steps]
   );
 
+  const onDragEnd = (result: DropResult) => {
+    // TODO
+  };
+
   return (
     <>
-      <DndProvider backend={Backend}>
-        <ul className="rounded-lg p-4 mb-4 grid row-gap-4 bg-gray">
-          {state.context.steps.map((step, index) => (
-            <SetupStep
-              key={step.id}
-              step={step}
-              index={index}
-              onDelete={(id: number) => send("REMOVE_STEP", { id })}
-              reorderStep={reorderStep}
-            />
-          ))}
-        </ul>
-      </DndProvider>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="steps">
+          {provided => (
+            <ul
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="rounded-lg p-4 mb-4 grid row-gap-4 bg-gray"
+            >
+              {state.context.steps.map((step, index) => (
+                <SetupStep
+                  key={step.id}
+                  step={step}
+                  index={index}
+                  onDelete={(id: number) => send("REMOVE_STEP", { id })}
+                />
+              ))}
+            </ul>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       <form className="grid gap-4 grid-cols-4 col-span-4" onSubmit={createStep}>
         <input
