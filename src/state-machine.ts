@@ -16,8 +16,7 @@ export type KadenssiEvent =
   | { type: "ADD_STEP"; title: string; duration: number }
   | { type: "REMOVE_STEP"; id: number }
   | { type: "EDIT_STEP"; id: number; title: string; duration: number }
-  | { type: "MOVE_STEP_UP"; id: number }
-  | { type: "MOVE_STEP_DOWN"; id: number }
+  | { type: "SORT_STEPS"; steps: IStep[] }
   | { type: "RUN" }
   | { type: "TICK" }
   | { type: "PAUSE" }
@@ -133,9 +132,14 @@ export const machine = Machine<
               }
             })
           },
-          // @TODO: Support reordering
-          MOVE_STEP_UP: "setup",
-          MOVE_STEP_DOWN: "setup"
+          SORT_STEPS: {
+            target: "setup",
+            actions: assign({
+              steps: (context, { steps }) => {
+                return steps;
+              }
+            })
+          }
         }
       },
       running: {

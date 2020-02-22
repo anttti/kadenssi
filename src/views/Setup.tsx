@@ -1,8 +1,11 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
+import { DndProvider } from "react-dnd";
+import Backend from "react-dnd-html5-backend";
 import { State } from "xstate";
+import update from "immutability-helper";
 import Button from "../components/Button";
+import SetupStep from "../components/SetupStep";
 import { guards, IKadenssiContext, KadenssiEvent } from "../state-machine";
-import { secondsToTime } from "../utils";
 
 interface ISetup {
   send: any;
@@ -29,24 +32,36 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
     send("SET_DURATION", { duration: parseInt(str, 10) });
   };
 
+  const reorderStep = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const dragStep = state.context.steps[dragIndex];
+      console.log("drag", dragIndex, "over", hoverIndex);
+      const sortedSteps = update(state.context.steps, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragStep]
+        ]
+      });
+      send("SORT_STEPS", { steps: sortedSteps });
+    },
+    [state.context.steps]
+  );
+
   return (
     <>
-      <ul className="rounded-lg p-4 mb-4 grid row-gap-4 bg-gray">
-        {state.context.steps.map(step => (
-          <li key={step.id} className="flex items-center">
-            <div className="flex-1">{step.title}</div>
-            <div className="w-24 flex justify-between items-center">
-              {secondsToTime(step.duration)}
-              <Button
-                type="small"
-                onClick={() => send("REMOVE_STEP", { id: step.id })}
-              >
-                🗑
-              </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <DndProvider backend={Backend}>
+        <ul className="rounded-lg p-4 mb-4 grid row-gap-4 bg-gray">
+          {state.context.steps.map((step, index) => (
+            <SetupStep
+              key={step.id}
+              step={step}
+              index={index}
+              onDelete={(id: number) => send("REMOVE_STEP", { id })}
+              reorderStep={reorderStep}
+            />
+          ))}
+        </ul>
+      </DndProvider>
 
       <form className="grid gap-4 grid-cols-4 col-span-4" onSubmit={createStep}>
         <input
