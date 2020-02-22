@@ -12,3 +12,8 @@
   background: #2f353c;
   box-shadow: inset 4px 4px 8px #1e2226, inset -4px -4px 8px #404852;
 }
+
+.button--small {
+  border-radius: 10px;
+  box-shadow: none;
+}

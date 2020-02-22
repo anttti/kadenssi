@@ -5,14 +5,17 @@ interface IButton {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
+  type?: "small";
 }
 
 const Button: React.FC<IButton> = ({
   onClick,
   className,
   disabled,
-  children
+  children,
+  type
 }) => {
+  const isSmall = type === "small";
   return (
     <button
       onClick={onClick}
@@ -23,12 +26,14 @@ const Button: React.FC<IButton> = ({
          font-bold
          text-white
          tracking-widest
-         rounded
-         py-4
-         px-10
          active:outline-none
          focus:outline-none`,
         {
+          "button--small": isSmall,
+          "py-1": isSmall,
+          "px-2": isSmall,
+          "py-4": !isSmall,
+          "px-10": !isSmall,
           "opacity-50": disabled
         }
       )}

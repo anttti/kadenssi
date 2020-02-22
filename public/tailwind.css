@@ -10307,6 +10307,11 @@ video {
   box-shadow: inset 4px 4px 8px #1e2226, inset -4px -4px 8px #404852;
 }
 
+.button--small {
+  border-radius: 10px;
+  box-shadow: none;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;

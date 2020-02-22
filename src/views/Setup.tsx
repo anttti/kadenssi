@@ -31,12 +31,18 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
 
   return (
     <>
-      <ul className="rounded-lg p-4 mb-4 grid row-gap-2 bg-gray">
+      <ul className="rounded-lg p-4 mb-4 grid row-gap-4 bg-gray">
         {state.context.steps.map(step => (
-          <li key={step.id} className="grid gap-4 grid-cols-4 col-span-4">
-            <div className="col-span-3">{step.title}</div>
-            <div className="col-span-1 text-right">
+          <li key={step.id} className="flex items-center">
+            <div className="flex-1">{step.title}</div>
+            <div className="w-24 flex justify-between items-center">
               {secondsToTime(step.duration)}
+              <Button
+                type="small"
+                onClick={() => send("REMOVE_STEP", { id: step.id })}
+              >
+                🗑
+              </Button>
             </div>
           </li>
         ))}
