@@ -134,6 +134,7 @@ export const machine = Machine<
         }
       },
       running: {
+        // @TODO: Add subtree for active states
         entry: assign({
           currentTime: ({ currentTime }) => currentTime + 1,
           currentStep: ({ steps, currentTime, currentStep }) => {

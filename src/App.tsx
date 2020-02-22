@@ -1,15 +1,8 @@
 import React, { useEffect } from "react";
 import { useMachine } from "@xstate/react";
-import Button from "./components/Button";
+import Active from "./views/Active";
 import Setup from "./views/Setup";
 import { machine } from "./state-machine";
-
-const prependZero = (val: number) => {
-  if (val < 10) {
-    return `0${val}`;
-  }
-  return val.toString();
-};
 
 function App() {
   const [state, send] = useMachine(machine);
@@ -29,37 +22,13 @@ function App() {
     return () => clearInterval(interval);
   }, [send]);
 
-  const renderActive = () => {
-    const currentStep = state.context.steps[state.context.currentStep];
-    const currentStepMinutes = Math.floor(currentStep.duration / 60);
-    const currentStepSeconds = currentStep.duration % 60;
-    const elapsed = state.context.currentTime;
-    const elapsedMinutes = Math.floor(elapsed / 60);
-    const elapsedSeconds = elapsed % 60;
-
-    return (
-      <>
-        <h1 className="">
-          {prependZero(elapsedMinutes)}:{prependZero(elapsedSeconds)}
-        </h1>
-        <p>
-          {currentStep.title} ({prependZero(currentStepMinutes)}:
-          {prependZero(currentStepSeconds)})
-        </p>
-
-        {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
-        {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}
-      </>
-    );
-  };
-
   return (
     <div className="container mx-auto p-4 min-h-screen">
       <h1 className="ml-4 mb-4 uppercase font-bold tracking-widest text-center opacity-50">
         Kadenssi
       </h1>
       {isSetup && <Setup send={send} state={state} />}
-      {isActive && renderActive()}
+      {isActive && <Active send={send} state={state} />}
     </div>
   );
 }
