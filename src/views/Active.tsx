@@ -22,7 +22,7 @@ const Active: React.FC<IActive> = ({ send, state }) => {
 
   return (
     <>
-      <h1 className="">
+      <h1 className="text-6xl font-bold text-center">
         {prependZero(elapsedMinutes)}:{prependZero(elapsedSeconds)}
       </h1>
       <p>
