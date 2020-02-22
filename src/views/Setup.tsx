@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
+import { State } from "xstate";
 import Button from "../components/Button";
 import { guards, IKadenssiContext, KadenssiEvent } from "../state-machine";
-import { State } from "xstate";
+import { secondsToTime } from "../utils";
 
 interface ISetup {
   send: any;
@@ -34,7 +35,9 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
         {state.context.steps.map(step => (
           <li key={step.id} className="grid gap-4 grid-cols-4 col-span-4">
             <div className="col-span-3">{step.title}</div>
-            <div className="col-span-1 text-right">{step.duration} min</div>
+            <div className="col-span-1 text-right">
+              {secondsToTime(step.duration)}
+            </div>
           </li>
         ))}
       </ul>

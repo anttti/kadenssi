@@ -62,13 +62,18 @@ export const machine = Machine<
       steps: [
         {
           id: 0,
-          title: "Intro ja follow-up",
-          duration: 10
+          title: "Vaihe 1",
+          duration: 1
         },
         {
           id: 1,
-          title: "Aiheen esittely",
-          duration: 10
+          title: "Vaihe 2",
+          duration: 1
+        },
+        {
+          id: 2,
+          title: "Vaihe 3",
+          duration: 1
         }
       ],
       currentTime: 0,

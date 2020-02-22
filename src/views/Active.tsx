@@ -1,19 +1,13 @@
 import React from "react";
-import Button from "../components/Button";
-import { IKadenssiContext, KadenssiEvent } from "../state-machine";
 import { State } from "xstate";
+import { IKadenssiContext, KadenssiEvent } from "../state-machine";
+import Button from "../components/Button";
+import { prependZero } from "../utils";
 
 interface IActive {
   send: any;
   state: State<IKadenssiContext, KadenssiEvent, any, any>;
 }
-
-const prependZero = (val: number) => {
-  if (val < 10) {
-    return `0${val}`;
-  }
-  return val.toString();
-};
 
 const Active: React.FC<IActive> = ({ send, state }) => {
   const isRunning = state.matches("running");
@@ -33,8 +27,8 @@ const Active: React.FC<IActive> = ({ send, state }) => {
       </h1>
       <p>
         {currentStep.title} ({prependZero(currentStepMinutes)}:
-          {prependZero(currentStepSeconds)})
-        </p>
+        {prependZero(currentStepSeconds)})
+      </p>
 
       {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
       {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}

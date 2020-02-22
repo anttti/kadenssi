@@ -10,7 +10,8 @@ function App() {
   const isSetup = state.matches("setup");
   const isRunning = state.matches("running");
   const isPaused = state.matches("paused");
-  const isActive = isRunning || isPaused;
+  const isFinished = state.matches("finished");
+  const isActive = isRunning || isPaused || isFinished;
 
   console.log("Current state:", state.value);
   console.log("Context:", state.context);
@@ -24,9 +25,6 @@ function App() {
 
   return (
     <div className="container mx-auto p-4 min-h-screen">
-      <h1 className="ml-4 mb-4 uppercase font-bold tracking-widest text-center opacity-50">
-        Kadenssi
-      </h1>
       {isSetup && <Setup send={send} state={state} />}
       {isActive && <Active send={send} state={state} />}
     </div>
