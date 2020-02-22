@@ -19,6 +19,7 @@ const App = () => {
   // reacted to when the state machine is in the "running" state.
   //
   // @TODO: Use timed transitions instead
+  // https://xstate.js.org/docs/guides/delays.html#delayed-transitions
   useEffect(() => {
     const interval = setInterval(() => send("TICK"), 1000);
     return () => clearInterval(interval);
