@@ -1,15 +1,14 @@
-import React, { useRef, useCallback } from "react";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult
-} from "react-beautiful-dnd";
+import React, { useRef } from "react";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { State } from "xstate";
-import update from "immutability-helper";
 import Button from "../components/Button";
 import SetupStep from "../components/SetupStep";
-import { guards, IKadenssiContext, KadenssiEvent } from "../state-machine";
+import {
+  guards,
+  IKadenssiContext,
+  IStep,
+  KadenssiEvent
+} from "../state-machine";
 
 interface ISetup {
   send: any;
@@ -36,7 +35,7 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
     send("SET_DURATION", { duration: parseInt(str, 10) });
   };
 
-  const reorder = (list: any[], startIndex: number, endIndex: number) => {
+  const reorder = (list: IStep[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
