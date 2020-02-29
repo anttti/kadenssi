@@ -57,29 +57,6 @@ export const machine = Machine<
   {
     id: "kadenssi",
     initial: "setup",
-    context: {
-      steps: [
-        {
-          id: 0,
-          title: "Vaihe 1",
-          duration: 1
-        },
-        {
-          id: 1,
-          title: "Vaihe 2",
-          duration: 1
-        },
-        {
-          id: 2,
-          title: "Vaihe 3",
-          duration: 1
-        }
-      ],
-      currentTime: 0,
-      currentStep: 0,
-      newStepTitle: "",
-      newStepDuration: 0
-    },
     states: {
       setup: {
         entry: assign({
