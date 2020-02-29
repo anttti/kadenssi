@@ -36,23 +36,26 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
     send("SET_DURATION", { duration: parseInt(str, 10) });
   };
 
-  const reorderStep = useCallback(
-    (dragIndex: number, hoverIndex: number) => {
-      const dragStep = state.context.steps[dragIndex];
-      console.log("drag", dragIndex, "over", hoverIndex);
-      const sortedSteps = update(state.context.steps, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragStep]
-        ]
-      });
-      send("SORT_STEPS", { steps: sortedSteps });
-    },
-    [state.context.steps]
-  );
+  const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+  };
 
   const onDragEnd = (result: DropResult) => {
-    // TODO
+    if (!result.destination) {
+      return;
+    }
+
+    const steps = reorder(
+      state.context.steps,
+      result.source.index,
+      result.destination.index
+    );
+
+    send("SORT_STEPS", { steps });
   };
 
   return (
