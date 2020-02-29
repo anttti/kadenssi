@@ -3,7 +3,7 @@ import { State } from "xstate";
 import classNames from "classnames";
 import { IKadenssiContext, KadenssiEvent } from "../state-machine";
 import Button from "../components/Button";
-import { secondsToTime } from "../utils";
+import { secondsToTime, getTimeRemaining } from "../utils";
 
 interface IActive {
   send: any;
@@ -38,7 +38,19 @@ const Active: React.FC<IActive> = ({ send, state }) => {
             })}
           >
             <h2>{step.title}</h2>
-            <time className="text-right">{secondsToTime(step.duration)}</time>
+            <div className="text-right">
+              <time>
+                {secondsToTime(
+                  getTimeRemaining(
+                    index,
+                    state.context.steps,
+                    state.context.currentTime,
+                    state.context.currentStep
+                  )
+                )}
+              </time>{" "}
+              / <time>{secondsToTime(step.duration)}</time>
+            </div>
           </li>
         ))}
       </ol>
