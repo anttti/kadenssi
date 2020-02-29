@@ -66,7 +66,7 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
             <ul
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="rounded-lg p-4 mb-4 grid row-gap-4 bg-gray"
+              className="rounded-lg p-4 mb-4 bg-gray"
             >
               {state.context.steps.map((step, index) => (
                 <SetupStep
@@ -76,6 +76,7 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
                   onDelete={(id: number) => send("REMOVE_STEP", { id })}
                 />
               ))}
+              {provided.placeholder}
             </ul>
           )}
         </Droppable>

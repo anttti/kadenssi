@@ -16,7 +16,7 @@ const SetupStep: React.FC<ISetupStep> = ({ step, index, onDelete }) => {
     <Draggable index={index} key={step.id} draggableId={step.id.toString()}>
       {provided => (
         <li
-          className="flex items-center"
+          className="flex items-center py-2 bg-gray rounded-md"
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}
