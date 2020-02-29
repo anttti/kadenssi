@@ -12,14 +12,8 @@ const App = () => {
   const isFinished = state!.matches("finished");
   const isActive = isRunning || isPaused || isFinished;
 
-  console.log("Current state:", state!.value);
-  console.log("Context:", state!.context);
-
   // Master clock. Always keep sending the TICK event, as it is only
   // reacted to when the state machine is in the "running" state.
-  //
-  // @TODO: Use timed transitions instead
-  // https://xstate.js.org/docs/guides/delays.html#delayed-transitions
   useEffect(() => {
     const interval = setInterval(() => send("TICK"), 1000);
     return () => clearInterval(interval);
