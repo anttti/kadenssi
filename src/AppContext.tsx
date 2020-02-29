@@ -1,11 +1,17 @@
 import React from "react";
 import { useMachine } from "@xstate/react";
 import { State } from "xstate";
-import { machine, IKadenssiContext, KadenssiEvent } from "./state-machine";
+import {
+  machine,
+  IKadenssiContext,
+  IStep,
+  KadenssiEvent
+} from "./state-machine";
 
 type ContextProps = {
   state: State<IKadenssiContext, KadenssiEvent, any, any>;
   send: any;
+  onStepsChanged: (steps: IStep[]) => void;
 };
 
 const defaultContext = {
@@ -33,16 +39,21 @@ const defaultContext = {
 };
 
 const readStateFromUrl = () => {
-  const params = new URL(document.location.href).searchParams;
-  const encodedCtx = params.get("c");
+  const encodedCtx = window.location.hash.substr(1);
   if (encodedCtx) {
     try {
-      return JSON.parse(window.atob(encodedCtx));
+      const steps = JSON.parse(window.atob(encodedCtx));
+      return { ...defaultContext, steps };
     } catch (e) {
       return defaultContext;
     }
   }
   return defaultContext;
+};
+
+const writeStateToUrl = (steps: IStep[]) => {
+  const payload = window.btoa(JSON.stringify(steps));
+  window.location.hash = payload;
 };
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
@@ -51,7 +62,9 @@ export const AppProvider = (props: any) => {
   const machineWithContext = machine.withContext(readStateFromUrl());
   const [state, send] = useMachine(machineWithContext);
   return (
-    <AppContext.Provider value={{ state, send }}>
+    <AppContext.Provider
+      value={{ state, send, onStepsChanged: writeStateToUrl }}
+    >
       {props.children}
     </AppContext.Provider>
   );
