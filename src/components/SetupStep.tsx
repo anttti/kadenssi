@@ -34,7 +34,7 @@ const SetupStep: React.FC<ISetupStep> = ({ step, index, onDelete }) => {
           <div className="w-24 flex justify-between items-center">
             {secondsToTime(step.duration)}
             <Button type="small" onClick={() => onDelete(step.id)}>
-              <TiDelete size="1.4rem" />
+              <TiDelete size="24px" />
             </Button>
           </div>
         </li>
