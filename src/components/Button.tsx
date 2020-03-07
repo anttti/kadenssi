@@ -7,6 +7,7 @@ interface IButton {
   className?: string;
   small?: boolean;
   secondary?: boolean;
+  style?: object;
 }
 
 const Button: React.FC<IButton> = ({
@@ -15,10 +16,12 @@ const Button: React.FC<IButton> = ({
   disabled,
   children,
   small,
-  secondary
+  secondary,
+  style
 }) => {
   return (
     <button
+      style={style}
       onClick={onClick}
       className={classNames(
         `${className}

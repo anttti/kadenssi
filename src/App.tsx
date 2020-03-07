@@ -1,7 +1,13 @@
 import React, { useContext, useEffect } from "react";
+import { Transition } from "react-spring/renderprops";
 import Active from "./views/Active";
 import Setup from "./views/Setup";
 import { AppContext } from "./AppContext";
+import withFadeIn from "./components/withFadeIn";
+import withSlideDown from "./components/withSlideDown";
+
+const FadeInActive = withFadeIn(Active);
+const SlideDownSetup = withSlideDown(Setup);
 
 const App = () => {
   const { send, state, onStepsChanged } = useContext(AppContext);
@@ -25,10 +31,10 @@ const App = () => {
   }, [steps, onStepsChanged]);
 
   return (
-    <div className="container mx-auto p-4 min-h-screen">
-      {isSetup && <Setup send={send} state={state!} />}
-      {isActive && <Active send={send} state={state!} />}
-    </div>
+    <>
+      <SlideDownSetup isVisible={isSetup} send={send} state={state!} />
+      <FadeInActive isVisible={isActive} send={send} state={state!} />
+    </>
   );
 };
 
