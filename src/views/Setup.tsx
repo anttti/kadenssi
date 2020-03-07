@@ -48,7 +48,7 @@ const Setup: React.FC<ISetup> = ({ send, state, style = {} }) => {
 
   return (
     <div className="container p-4 min-h-screen z-10" style={style}>
-      <div className="pb-6 bg-white shadow rounded-lg border border-gray-500">
+      <div className="pb-6 bg-white dreamy-shadow rounded-lg">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="steps">
             {provided => (
