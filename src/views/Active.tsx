@@ -57,6 +57,7 @@ const Active: React.FC<IActive> = ({ send, state }) => {
 
       <div className="flex justify-center">
         {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
+        {isRunning && <Button onClick={() => send("RESET")}>Takaisin</Button>}
         {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}
         {isFinished && <Button onClick={() => send("RESET")}>Valmis</Button>}
       </div>
