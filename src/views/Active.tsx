@@ -28,7 +28,7 @@ const Active: React.FC<IActive> = ({ send, state }) => {
         {secondsToTime(state.context.currentTime)}
       </h1>
 
-      <ol className="mb-12 text-2xl rounded-lg p-4 bg-gray">
+      <ol className="mb-12 text-2xl px-6 pt-5 pb-6 bg-white shadow rounded-lg border border-gray-500">
         {state.context.steps.map((step, index) => (
           <li
             key={step.id}

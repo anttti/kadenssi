@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { Draggable } from "react-beautiful-dnd";
-import { TiDelete } from "react-icons/ti";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
 import Button from "./Button";
 import { secondsToTime } from "../utils/time";
 import { IStep } from "../state-machine";
@@ -18,30 +18,22 @@ const SetupStep: React.FC<ISetupStep> = ({ step, index, onDelete }) => {
       {(provided, snapshot) => (
         <li
           className={classNames(
-            "flex items-center p-2 rounded-md transition-colors duration-500",
+            "flex items-center mb-2 py-2 pl-4 pr-2 rounded-md transition-shadow transition-colors duration-500 border border-transparent bg-gray-200",
             {
-              "bg-gray": !snapshot.isDragging,
-              "bg-light-gray": snapshot.isDragging
+              "shadow-lg": snapshot.isDragging
             }
           )}
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            className="mr-4 cursor-move opacity-75"
-          >
-            <path fill="#fff" d="M20 9H4v2h16V9zM4 15h16v-2H4v2z"></path>
-          </svg>
           <div className="flex-1">{step.title}</div>
           <div className="w-24 flex justify-between items-center">
-            {secondsToTime(step.duration)}
-            <Button type="small" onClick={() => onDelete(step.id)}>
-              <TiDelete size="24px" />
+            <span style={{ lineHeight: "20px" }}>
+              {secondsToTime(step.duration)}
+            </span>
+            <Button small onClick={() => onDelete(step.id)}>
+              <IoIosRemoveCircleOutline size="24px" />
             </Button>
           </div>
         </li>

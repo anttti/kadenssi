@@ -46,7 +46,7 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
   };
 
   return (
-    <>
+    <div className="pb-6 bg-white shadow rounded-lg border border-gray-500">
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="steps">
           {provided => (
@@ -69,25 +69,44 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
         </Droppable>
       </DragDropContext>
 
-      <form className="grid gap-4 grid-cols-4 col-span-4" onSubmit={createStep}>
-        <input
-          id="title"
-          type="text"
-          className="rounded-lg py-2 px-4 col-span-3 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
-          value={state.context.newStepTitle}
-          placeholder="Otsikko"
-          onChange={e => onTitleChanged(e.target.value)}
-          ref={titleRef}
-        />
+      <form
+        className="grid gap-4 grid-cols-4 col-span-4 px-4"
+        onSubmit={createStep}
+      >
+        <div className="col-span-3">
+          <label
+            htmlFor="title"
+            className="block uppercase tracking-widest text-gray-600 text-xs font-bold mb-2"
+          >
+            Nimi
+          </label>
+          <input
+            id="title"
+            type="text"
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 transition-all duration-100 ease-in-out"
+            value={state.context.newStepTitle}
+            placeholder="Lisää uusi..."
+            onChange={e => onTitleChanged(e.target.value)}
+            ref={titleRef}
+          />
+        </div>
 
-        <input
-          id="duration"
-          type="number"
-          className="rounded-lg py-2 px-4 col-span-1 focus:outline-none bg-gray focus:bg-light-gray transition-all duration-100 ease-in-out"
-          value={state.context.newStepDuration}
-          placeholder="Kesto (min)"
-          onChange={e => onDurationChanged(e.target.value)}
-        />
+        <div className="col-span-1">
+          <label
+            htmlFor="title"
+            className="block uppercase tracking-widest text-gray-600 text-xs font-bold mb-2"
+          >
+            Kesto
+          </label>
+          <input
+            id="duration"
+            type="number"
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 transition-all duration-100 ease-in-out"
+            value={state.context.newStepDuration}
+            placeholder="Kesto (min)"
+            onChange={e => onDurationChanged(e.target.value)}
+          />
+        </div>
 
         <input type="submit" style={{ visibility: "hidden" }} />
       </form>
@@ -99,7 +118,7 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
       >
         Aloita
       </Button>
-    </>
+    </div>
   );
 };
 
