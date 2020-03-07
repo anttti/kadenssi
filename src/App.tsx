@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import { Transition } from "react-spring/renderprops";
 import Active from "./views/Active";
 import Setup from "./views/Setup";
 import { AppContext } from "./AppContext";
