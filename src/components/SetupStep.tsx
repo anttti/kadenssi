@@ -26,6 +26,11 @@ const SetupStep: React.FC<ISetupStep> = ({ step, index, onDelete }) => {
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}
+          style={{
+            ...provided.draggableProps.style,
+            left:
+              "32px" /* Dumb hack here because react-beautiful-dnd and react-spring do not like eachother */
+          }}
         >
           <div className="flex-1">{step.title}</div>
           <div className="w-24 flex justify-between items-center">

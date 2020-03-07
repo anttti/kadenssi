@@ -2,10 +2,10 @@ import React, { useContext, useEffect } from "react";
 import Active from "./views/Active";
 import Setup from "./views/Setup";
 import { AppContext } from "./AppContext";
-import withFadeIn from "./components/withFadeIn";
+import withScaleFadeIn from "./components/withScaleFadeIn";
 import withSlideDown from "./components/withSlideDown";
 
-const FadeInActive = withFadeIn(Active);
+const FadeInActive = withScaleFadeIn(Active);
 const SlideDownSetup = withSlideDown(Setup);
 
 const App = () => {
