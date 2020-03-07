@@ -3,14 +3,18 @@ import { State } from "xstate";
 import classNames from "classnames";
 import { IKadenssiContext, KadenssiEvent } from "../state-machine";
 import Button from "../components/Button";
+import withFadeIn from "../components/withFadeIn";
 import { secondsToTime, getTimeRemaining } from "../utils/time";
 
 interface IActive {
   send: any;
   state: State<IKadenssiContext, KadenssiEvent, any, any>;
+  style?: object;
 }
 
-const Active: React.FC<IActive> = ({ send, state }) => {
+const FadeInButton = withFadeIn(Button);
+
+const Active: React.FC<IActive> = ({ send, state, style = {} }) => {
   const isRunning = state.matches("running");
   const isPaused = state.matches("paused");
   const isFinished = state.matches("finished");
@@ -23,7 +27,7 @@ const Active: React.FC<IActive> = ({ send, state }) => {
     stepIndex === state.context.currentStep;
 
   return (
-    <>
+    <div className="container p-4 min-h-screen" style={style}>
       <h1 className="mb-6 text-6xl font-bold text-center">
         {secondsToTime(state.context.currentTime)}
       </h1>
@@ -55,20 +59,28 @@ const Active: React.FC<IActive> = ({ send, state }) => {
         ))}
       </ol>
 
-      <div className="mb-12 flex justify-center">
-        {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
-        {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}
-        {isFinished && <Button onClick={() => send("RESET")}>Valmis</Button>}
+      <div className="mb-20 flex justify-center">
+        <FadeInButton isVisible={isRunning} onClick={() => send("PAUSE")}>
+          Tauko
+        </FadeInButton>
+        <FadeInButton isVisible={isPaused} onClick={() => send("RUN")}>
+          Jatka
+        </FadeInButton>
+        <FadeInButton isVisible={isFinished} onClick={() => send("RESET")}>
+          Takaisin
+        </FadeInButton>
       </div>
 
       <div className="flex justify-center">
-        {isPaused && (
-          <Button secondary onClick={() => send("STOP")}>
-            Takaisin
-          </Button>
-        )}
+        <FadeInButton
+          isVisible={isPaused}
+          secondary
+          onClick={() => send("STOP")}
+        >
+          Takaisin
+        </FadeInButton>
       </div>
-    </>
+    </div>
   );
 };
 
