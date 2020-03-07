@@ -7,6 +7,7 @@ import {
   IStep,
   KadenssiEvent
 } from "./state-machine";
+import { readStateFromUrl, writeStateToUrl } from "./utils/url-state";
 
 type ContextProps = {
   state: State<IKadenssiContext, KadenssiEvent, any, any>;
@@ -14,50 +15,14 @@ type ContextProps = {
   onStepsChanged: (steps: IStep[]) => void;
 };
 
-const defaultContext = {
-  steps: [
-    {
-      id: 0,
-      title: "Intro & follow-up",
-      duration: 10 * 60
-    },
-    {
-      id: 1,
-      title: "Aihe",
-      duration: 40 * 60
-    },
-    {
-      id: 2,
-      title: "Jakson valinnat",
-      duration: 15 * 60
-    }
-  ],
-  currentTime: 0,
-  currentStep: 0,
-  newStepTitle: "",
-  newStepDuration: 0
-};
-
-const readStateFromUrl = () => {
-  const encodedCtx = window.location.hash.substr(1);
-  if (encodedCtx) {
-    try {
-      const steps = JSON.parse(window.atob(encodedCtx));
-      return { ...defaultContext, steps };
-    } catch (e) {
-      return defaultContext;
-    }
-  }
-  return defaultContext;
-};
-
-const writeStateToUrl = (steps: IStep[]) => {
-  const payload = window.btoa(JSON.stringify(steps));
-  window.location.hash = payload;
-};
-
 export const AppContext = React.createContext<Partial<ContextProps>>({});
 
+/**
+ * Hook XState to React context to enable hot module reloading
+ * while developing the application (otherwise the state of the
+ * state machine would get blown away whenever the React app
+ * is live reloaded).
+ */
 export const AppProvider = (props: any) => {
   const machineWithContext = machine.withContext(readStateFromUrl());
   const [state, send] = useMachine(machineWithContext);

@@ -1,8 +1,9 @@
 import React from "react";
+import classNames from "classnames";
 import { Draggable } from "react-beautiful-dnd";
 import { TiDelete } from "react-icons/ti";
 import Button from "./Button";
-import { secondsToTime } from "../utils";
+import { secondsToTime } from "../utils/time";
 import { IStep } from "../state-machine";
 
 interface ISetupStep {
@@ -14,9 +15,15 @@ interface ISetupStep {
 const SetupStep: React.FC<ISetupStep> = ({ step, index, onDelete }) => {
   return (
     <Draggable index={index} key={step.id} draggableId={step.id.toString()}>
-      {provided => (
+      {(provided, snapshot) => (
         <li
-          className="flex items-center py-2 bg-gray rounded-md"
+          className={classNames(
+            "flex items-center p-2 rounded-md transition-colors duration-500",
+            {
+              "bg-gray": !snapshot.isDragging,
+              "bg-light-gray": snapshot.isDragging
+            }
+          )}
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}

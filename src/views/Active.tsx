@@ -3,7 +3,7 @@ import { State } from "xstate";
 import classNames from "classnames";
 import { IKadenssiContext, KadenssiEvent } from "../state-machine";
 import Button from "../components/Button";
-import { secondsToTime, getTimeRemaining } from "../utils";
+import { secondsToTime, getTimeRemaining } from "../utils/time";
 
 interface IActive {
   send: any;
@@ -55,11 +55,18 @@ const Active: React.FC<IActive> = ({ send, state }) => {
         ))}
       </ol>
 
-      <div className="flex justify-center">
+      <div className="mb-12 flex justify-center">
         {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
-        {isRunning && <Button onClick={() => send("RESET")}>Takaisin</Button>}
         {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}
         {isFinished && <Button onClick={() => send("RESET")}>Valmis</Button>}
+      </div>
+
+      <div className="flex justify-center">
+        {isPaused && (
+          <Button secondary onClick={() => send("STOP")}>
+            Takaisin
+          </Button>
+        )}
       </div>
     </>
   );

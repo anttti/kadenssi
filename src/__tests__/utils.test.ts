@@ -1,4 +1,4 @@
-import { getTimeRemaining } from "../utils";
+import { getTimeRemaining } from "../utils/time";
 
 it("calculates remaining time per step", () => {
   const steps = [

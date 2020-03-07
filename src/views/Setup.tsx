@@ -3,12 +3,8 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { State } from "xstate";
 import Button from "../components/Button";
 import SetupStep from "../components/SetupStep";
-import {
-  guards,
-  IKadenssiContext,
-  IStep,
-  KadenssiEvent
-} from "../state-machine";
+import { guards, IKadenssiContext, KadenssiEvent } from "../state-machine";
+import { reorder } from "../utils/order";
 
 interface ISetup {
   send: any;
@@ -33,14 +29,6 @@ const Setup: React.FC<ISetup> = ({ send, state }) => {
 
   const onDurationChanged = (str: string) => {
     send("SET_DURATION", { duration: parseInt(str, 10) });
-  };
-
-  const reorder = (list: IStep[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-
-    return result;
   };
 
   const onDragEnd = (result: DropResult) => {
