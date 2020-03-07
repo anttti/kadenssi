@@ -28,21 +28,21 @@ const Active: React.FC<IActive> = ({ send, state, style = {} }) => {
 
   return (
     <div className="container p-4 min-h-screen" style={style}>
-      <h1 className="mb-6 text-6xl font-bold text-center">
+      <h1 className="mb-6 text-6xl font-bold font-mono text-center">
         {secondsToTime(state.context.currentTime)}
       </h1>
 
-      <ol className="mb-12 text-2xl px-6 pt-5 pb-6 bg-white shadow rounded-lg border border-gray-500">
+      <ol className="mb-12 md:text-xl lg:text-2xl px-6 pt-5 pb-6 bg-white shadow rounded-lg border border-gray-500">
         {state.context.steps.map((step, index) => (
           <li
             key={step.id}
-            className={classNames("grid grid-cols-2", {
+            className={classNames("flex", {
               "line-through": isDone(index),
               "opacity-50": isDone(index) || !isCurrent(index)
             })}
           >
-            <h2>{step.title}</h2>
-            <div className="text-right">
+            <h2 className="flex-1 pr-2">{step.title}</h2>
+            <div className="font-mono text-right">
               <time>
                 {secondsToTime(
                   getTimeRemaining(
@@ -59,16 +59,10 @@ const Active: React.FC<IActive> = ({ send, state, style = {} }) => {
         ))}
       </ol>
 
-      <div className="mb-20 flex justify-center">
-        <FadeInButton isVisible={isRunning} onClick={() => send("PAUSE")}>
-          Tauko
-        </FadeInButton>
-        <FadeInButton isVisible={isPaused} onClick={() => send("RUN")}>
-          Jatka
-        </FadeInButton>
-        <FadeInButton isVisible={isFinished} onClick={() => send("RESET")}>
-          Takaisin
-        </FadeInButton>
+      <div className="mb-8 flex justify-center">
+        {isRunning && <Button onClick={() => send("PAUSE")}>Tauko</Button>}
+        {isPaused && <Button onClick={() => send("RUN")}>Jatka</Button>}
+        {isFinished && <Button onClick={() => send("RESET")}>Takaisin</Button>}
       </div>
 
       <div className="flex justify-center">
