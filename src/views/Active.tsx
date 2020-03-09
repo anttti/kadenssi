@@ -27,7 +27,7 @@ const Active: React.FC<IActive> = ({ send, state, style = {} }) => {
     stepIndex === state.context.currentStep;
 
   return (
-    <div className="container p-4 min-h-screen" style={style}>
+    <div className="container p-4" style={style}>
       <h1 className="mb-6 text-6xl font-bold font-mono text-center">
         {secondsToTime(state.context.currentTime)}
       </h1>
