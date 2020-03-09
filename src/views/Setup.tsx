@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { State } from "xstate";
 import Button from "../components/Button";
+import Input from "../components/Input";
 import SetupStep from "../components/SetupStep";
 import { guards, IKadenssiContext, KadenssiEvent } from "../state-machine";
 import { reorder } from "../utils/order";
@@ -76,37 +77,24 @@ const Setup: React.FC<ISetup> = ({ send, state, style = {} }) => {
           onSubmit={createStep}
         >
           <div className="col-span-3">
-            <label
-              htmlFor="title"
-              className="block uppercase tracking-widest text-gray-600 text-xs font-bold mb-2"
-            >
-              Nimi
-            </label>
-            <input
+            <Input
               id="title"
-              type="text"
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 transition-all duration-100 ease-in-out"
+              title="Nimi"
+              placeholder="Lisaa uusi..."
               value={state.context.newStepTitle}
-              placeholder="Lisää uusi..."
-              onChange={e => onTitleChanged(e.target.value)}
-              ref={titleRef}
+              onChange={onTitleChanged}
+              inputRef={titleRef}
             />
           </div>
 
           <div className="col-span-1">
-            <label
-              htmlFor="title"
-              className="block uppercase tracking-widest text-gray-600 text-xs font-bold mb-2"
-            >
-              Kesto
-            </label>
-            <input
-              id="duration"
-              type="number"
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 transition-all duration-100 ease-in-out"
-              value={state.context.newStepDuration}
+            <Input
+              id="title"
+              title="Kesto"
               placeholder="Kesto (min)"
-              onChange={e => onDurationChanged(e.target.value)}
+              value={state.context.newStepDuration}
+              onChange={onDurationChanged}
+              type="number"
             />
           </div>
 
