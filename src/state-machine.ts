@@ -124,9 +124,15 @@ export const machine = Machine<
         entry: assign({
           currentTime: ({ currentTime }) => currentTime + 1,
           currentStep: ({ steps, currentTime, currentStep }) => {
+            const totalTimeUntilTheEndOfCurrentStep = steps
+              .slice(0, currentStep + 1)
+              .reduce((acc, curr) => {
+                return acc + curr.duration;
+              }, 0);
             const isTimeLeftInCurrentStep =
-              currentTime < steps[currentStep].duration;
+              currentTime < totalTimeUntilTheEndOfCurrentStep;
             const isNextStepAvailable = currentStep < steps.length - 1;
+
             if (!isTimeLeftInCurrentStep && isNextStepAvailable) {
               return currentStep + 1;
             }
